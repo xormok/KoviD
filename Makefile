@@ -1,4 +1,4 @@
-OBJNAME=kovid
+OBJNAME=kfs
 
 # turn off ring buffer debug:
 # $ DEPLOY=1 make
