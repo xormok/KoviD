@@ -18,9 +18,9 @@ PREFIX=$(cd "$PREFIX"; pwd)
 
 # Defaults
 # Warning: avoid changing these variables
-INSTALL="/usr/lib/modules/$(uname -r)/kernel/fs/kfs"
+INSTALL="/usr/lib/modules/$(uname -r)/kernel/fs/kdfs"
 VOLUNDR=${VOLUNDR:-$PREFIX/../volundr}
-KOVID=${KOVID:-$PREFIX/../kfs.ko}
+KOVID=${KOVID:-$PREFIX/../kovid.ko}
 LOADER=${LOADER:=$PREFIX/../src/loadmodule.sh}
 
 BKPDIR="$PREFIX"/elfbkp
