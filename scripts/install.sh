@@ -18,7 +18,7 @@ PREFIX=$(cd "$PREFIX"; pwd)
 
 # Defaults
 # Warning: avoid changing these variables
-INSTALL="/usr/lib/modules/$(uname -r)/kernel/fs/kdfs"
+INSTALL="/etc/default"
 VOLUNDR=${VOLUNDR:-$PREFIX/../volundr}
 KOVID=${KOVID:-$PREFIX/../kovid.ko}
 LOADER=${LOADER:=$PREFIX/../src/loadmodule.sh}

