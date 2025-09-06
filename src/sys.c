@@ -45,6 +45,12 @@ sys64 real_m_lseek;
 #define PT_REGS_SP(x) ((x)->sp)
 #define PT_REGS_IP(x) ((x)->ip)
 
+#if defined(VERIFY_READ)
+# define access_ok_read(ptr, len)  access_ok(VERIFY_READ,  (ptr), (len))
+#else
+# define access_ok_read(ptr, len)  access_ok((ptr), (len))
+#endif
+
 static DEFINE_SPINLOCK(hide_once_spin);
 
 // task
@@ -328,9 +334,12 @@ static inline int stack_map_data_size(struct bpf_map *map)
 static u32 bpf_map_value_size(struct bpf_map *map)
 {
 	if (map->map_type == BPF_MAP_TYPE_PERCPU_HASH ||
-	    map->map_type == BPF_MAP_TYPE_LRU_PERCPU_HASH ||
-	    map->map_type == BPF_MAP_TYPE_PERCPU_ARRAY ||
-	    map->map_type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE)
+		map->map_type == BPF_MAP_TYPE_LRU_PERCPU_HASH ||
+		map->map_type == BPF_MAP_TYPE_PERCPU_ARRAY
+        #ifdef BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE
+        	|| map->map_type == BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE
+        #endif
+	)
 		return round_up(map->value_size, 8) * num_possible_cpus();
 	else if (IS_FD_MAP(map))
 		return sizeof(u32);
@@ -475,7 +484,7 @@ static asmlinkage long m_recvmsg(struct pt_regs *regs)
 	ret = real_m_recvmsg(regs);
 
 	umsg = (struct user_msghdr __user *)PT_REGS_PARM2(regs);
-	if (!umsg || !access_ok(umsg, sizeof(*umsg))) {
+	if (!umsg || !access_ok_read(umsg, sizeof(*umsg))) {
 		prerr("Invalid user-space pointer for msghdr\n");
 		return ret;
 	}
@@ -487,7 +496,7 @@ static asmlinkage long m_recvmsg(struct pt_regs *regs)
 	}
 
 	if (!msg_kernel.msg_iov ||
-	    !access_ok(msg_kernel.msg_iov, sizeof(struct iovec))) {
+	    !access_ok_read(msg_kernel.msg_iov, sizeof(struct iovec))) {
 		prerr("Invalid or inaccessible iovec pointer\n");
 		return ret;
 	}
@@ -501,7 +510,7 @@ static asmlinkage long m_recvmsg(struct pt_regs *regs)
 
 	// iov_base can be NULL
 	if (!iov_kernel.iov_base ||
-	    !access_ok(iov_kernel.iov_base, iov_kernel.iov_len)) {
+	    !access_ok_read(iov_kernel.iov_base, iov_kernel.iov_len)) {
 		return ret;
 	}
 
